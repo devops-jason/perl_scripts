@@ -41,14 +41,13 @@ my $archDir = "archive"; #Needed to check first run
 #Admin Servers used and location
 my %admServer = ( 
 		  'jsv' => 'controlmon1',
-#	       	  'sjc' => 'admin1',
-		  'pao' => 'polaris',
-		  'aus' => 'polaris'
+	       	  'sjc' => 'admin1',
+		  'pao' => 'polaris'
 		 );
 #Admin Servers user login required
 my %remoteUser = ( 
 		   'controlmon1' => 'root',
-#		   'admin1'	 => 'root',
+		   'admin1'	 => 'root',
 		   'polaris'	 => 'root' 
 		 );
 
@@ -58,8 +57,7 @@ my %remoteDirs = (
 		   'css' => 'css',
 		   'pix' => 'pix',
 		   'sw' => 'switch',
-		   'ssg' => 'ssg',
-		   'router' => 'router'
+		   'ssg' => 'ssg'
 		  );
 
 #Remote Device List Location
@@ -67,8 +65,7 @@ my %remoteLists = (
 		    'css' => '/usr/local/sbin/css-config.list',
 		    'pix' => '/usr/local/sbin/pix-config.list',
 		    'switch'=> '/usr/local/sbin/switch-config.list',
-		    'ssg' => '/usr/local/sbin/ssg-config.list',
-		    'router' => '/usr/local/sbin/aus2811-config.list'
+		    'ssg' => '/usr/local/sbin/ssg-config.list'
 		  );
 
 #Remote executables that create config files
@@ -76,8 +73,7 @@ my %remoteBin = (
 		  'css' => '/usr/local/sbin/css-config.pl',
 		  'pix' => '/usr/local/sbin/pix-config.pl',
 		  'switch' => '/usr/local/sbin/switch-config.pl',
-		  'ssg'	=> '/usr/local/sbin/ssg-config.pl',
-		  'router' => '/usr/local/sbin/aus2811-config.pl'
+		  'ssg'	=> '/usr/local/sbin/ssg-config.pl'
 		);
 	
 
@@ -92,8 +88,7 @@ my %nipperArg = (
 		  'css' => '--css',
 		  'pix' => '--asa',
 		  'switch' => '--ios-catalyst',
-		  'ssg' => '--screenos',
-		  'router' => '--ios-router');
+		  'ssg' => '--screenos' );
 
 
 sub LogReport
@@ -234,29 +229,19 @@ sub grabDeviceList
 			$output{"${dc}-out"} .= "\nDevice List \n" . ("~" x 50 ) .  "\n";
 			foreach $list ( keys (%remoteLists) )
 			{
-				if ( ($dc eq 'pao' || $dc eq 'jsv' || $dc eq 'sjc') && $list eq 'router' )
-                                {
-                                        next;
-                                }
-
-                                if ( $dc eq 'aus' && ( $list eq 'ssg' || $list eq 'css' || $list eq 'pix' || $list eq 'switch'))
-                                {
-                                        next;
-                                }
-
-
-                                if ( ($dc eq 'pao' || $dc eq 'sjc') && $list eq 'css' || $dc eq 'pao' && $list eq 'pix' )
-                                {
-                                        next;
-                                }
-                                if ( $dc eq 'sjc' && $list eq 'ssg' || $dc eq 'jsv' && $list eq 'ssg' )
-                                {
-                                        next;
-                                }
-
 				$cmd="ssh " . $remoteUser{$admServer{$dc}} . "@" . $admServer{$dc} . " \"cat " . $remoteLists{$list} . " \| grep -v \"^#\" \|  cut --delimiter=\'\|\' --fields=1 \| tr \'\\n\' \' \' \"";
 				eval {	@disp = capture ("${cmd}"); };
 				
+			
+				if ( ($dc eq 'pao' || $dc eq 'sjc') && $list eq 'css' || $dc eq 'pao' && $list eq 'pix' )
+				{
+					next;
+				}
+				if ( $dc eq 'sjc' && $list eq 'ssg' || $dc eq 'jsv' && $list eq 'ssg' )
+				{
+					next;
+				}
+
 				if (!@disp)
 				{
 					$output{"${dc}-err"} .= "\n" . "Unable to get file: " . $remoteLists{$list} . " on " . $admServer{$dc}  . "\n\n";

@@ -41,14 +41,14 @@ my $archDir = "archive"; #Needed to check first run
 #Admin Servers used and location
 my %admServer = ( 
 		  'jsv' => 'controlmon1',
-#	       	  'sjc' => 'admin1',
+	       	  'sjc' => 'admin1',
 		  'pao' => 'polaris',
 		  'aus' => 'polaris'
 		 );
 #Admin Servers user login required
 my %remoteUser = ( 
 		   'controlmon1' => 'root',
-#		   'admin1'	 => 'root',
+		   'admin1'	 => 'root',
 		   'polaris'	 => 'root' 
 		 );
 
@@ -236,21 +236,25 @@ sub grabDeviceList
 			{
 				if ( ($dc eq 'pao' || $dc eq 'jsv' || $dc eq 'sjc') && $list eq 'router' )
                                 {
+                                        print "NEXT 1 - ${dc} : ${list}\n";
                                         next;
                                 }
 
                                 if ( $dc eq 'aus' && ( $list eq 'ssg' || $list eq 'css' || $list eq 'pix' || $list eq 'switch'))
                                 {
+                                        print "NEXT 2 - ${dc} : ${list}\n";
                                         next;
                                 }
 
 
                                 if ( ($dc eq 'pao' || $dc eq 'sjc') && $list eq 'css' || $dc eq 'pao' && $list eq 'pix' )
                                 {
+                                        print "NEXT 3 - ${dc} : ${list}\n";
                                         next;
                                 }
                                 if ( $dc eq 'sjc' && $list eq 'ssg' || $dc eq 'jsv' && $list eq 'ssg' )
                                 {
+                                        print "NEXT 4 - ${dc} : ${list}\n";
                                         next;
                                 }
 
